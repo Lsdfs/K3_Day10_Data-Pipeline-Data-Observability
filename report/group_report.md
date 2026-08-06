@@ -86,7 +86,7 @@ Baseline quality passed all 10 checks. It contained 24 unique IDs, no empty titl
 | Quality | PASS | FAIL (5/10 checks) | PASS (10/10 checks) |
 | Freshness | fresh | stale_or_invalid | fresh |
 
-The causal evidence is direct: dropped/blank/noisy/duplicate/stale data produced quality failures and a 0.25 retrieval-hit reduction; rebuilding from the original raw snapshot restored both quality/freshness and all evaluation metrics. The complete comparison is in `data/reports/corruption_report.md`.
+The causal evidence is direct: dropped/blank/noisy/duplicate/stale data produced quality failures and a 0.25 retrieval-hit reduction; rebuilding from the original raw snapshot restored both quality/freshness and all evaluation metrics. The complete comparison is in `data/reports/corruption_report.md`. The companion visualization is `data/reports/metrics_comparison.svg`, generated from the three metrics artifacts without an external plotting dependency.
 
 ## 7. Integration issue and limitation
 
