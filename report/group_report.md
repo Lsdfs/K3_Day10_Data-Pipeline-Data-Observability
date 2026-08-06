@@ -9,10 +9,15 @@
 | Repository | `K3_Day10_Data-Pipeline-Data-Observability` |
 | Completion date | 2026-08-06 |
 
+| Member | MSSV | Primary role | Individual report |
+| --- | --- | --- | --- |
+| Nguyễn Quang Huy | 2A202601873 | Role 1 — configuration and orchestration | `report/individual_nguyen_quang_huy.md` |
+| Diêm Công Thành | 2A202601689 | Role 3 — RAG and agent | `report/2A202601689_DIEMCONGTHANH.md` |
+| Yen Khanh | 2A202601739 | Role 4 — evaluation and observability | `report/individual_report_ChuThiYenKhanh.md` |
+
 | Role | Ownership | Main deliverables |
 | --- | --- | --- |
 | 1 | Configuration and orchestration | `src/core/`, `src/pipelines/` |
-| 2 | Data platform and recovery | `src/ingestion/`, raw/clean artifacts |
 | 3 | RAG and agent | `src/retrieval/`, Chroma collections |
 | 4 | Evaluation and observability | `src/evaluation/`, `src/observability/` |
 
@@ -98,5 +103,5 @@ The initial full flow called Gemini once per evaluation sample, causing 48 seque
 - [x] Baseline/corrupted/repaired use the same fixed test set.
 - [x] Corruption log records affected DOI IDs and counts.
 - [x] Repair rebuilds from raw snapshot rather than modifying corrupted data.
-- [ ] Fill remaining member names and MSSV before submission, if applicable.
-- [ ] Commit the final code and regenerated artifacts before submission.
+- [x] Member names, MSSV, ownership, and individual reports are linked.
+- [ ] Confirm the final repository commit before submission.
