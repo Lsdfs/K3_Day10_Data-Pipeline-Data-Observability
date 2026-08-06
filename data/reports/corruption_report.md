@@ -1,29 +1,23 @@
-# Corruption & Repair Comparison Report
+# Corruption and Repair Comparison Report
 
-## Metrics Comparison
+## Evaluation metrics
 
-| Metric | Baseline | Corrupted | Delta | Repaired | Delta vs Baseline |
-|--------|----------|-----------|-------|----------|-------------------|
-| Retrieval Hit Rate | 1.000 | 1.000 | +0.000 | 1.000 | +0.000 |
-| Mean Token F1 | 0.963 | 0.841 | -0.122 | 0.963 | +0.000 |
-| Judge Accuracy | 1.000 | 0.875 | -0.125 | 1.000 | +0.000 |
-| Mean Judge Score | 4.4 | 4.0 | -0.417 | 4.4 | +0.000 |
+| Metric | Baseline | Corrupted | Repaired | Corruption Δ | Repair Δ |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `retrieval_hit_rate` | 1.0000 | 0.7500 | 1.0000 | -0.2500 | +0.2500 |
+| `mean_token_f1` | 1.0000 | 0.6667 | 1.0000 | -0.3333 | +0.3333 |
+| `judge_accuracy` | 1.0000 | 0.6667 | 1.0000 | -0.3333 | +0.3333 |
+| `mean_judge_score` | 5.0000 | 3.6667 | 5.0000 | -1.3333 | +1.3333 |
 
-## Quality Comparison
+## Data observability
 
-| Check | Corrupted | Repaired |
-|-------|-----------|----------|
-| Total rows | 25 | 24 |
-| Unique paper_ids | 24 | 24 |
-| Stale rows | 1 | 0 |
+| Dataset | Quality | Passed / Failed | Freshness | Stale rows |
+| --- | --- | ---: | --- | ---: |
+| Corrupted | FAIL | 6 / 4 | stale_or_invalid | 1 |
+| Repaired | PASS | 10 / 0 | fresh | 0 |
 
-## Freshness Comparison
+## Interpretation
 
-| Field | Corrupted | Repaired |
-|-------|-----------|----------|
-| Is fresh | NO | YES |
+The corrupted run has lower retrieval hit rate than baseline; inspect the answer and corruption-log artifacts for affected cases.
 
-## Conclusion
-
-The corruption flow demonstrates that data quality issues directly degrade agent performance.
-Repairing from raw source data restores performance to near-baseline levels.
+Repair is evaluated from a freshly rebuilt index and the same fixed test set. The report should be read together with `corruption_log.json`, answer artifacts, and the three metrics JSON files.

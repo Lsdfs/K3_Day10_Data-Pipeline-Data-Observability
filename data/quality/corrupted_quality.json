@@ -1,14 +1,89 @@
 {
-  "total_rows": 25,
-  "unique_paper_ids": 24,
+  "report_name": "corrupted",
+  "total_rows": 23,
+  "unique_paper_ids": 22,
+  "null_paper_ids": 0,
+  "null_titles": 0,
+  "empty_summaries": 3,
+  "duplicate_paper_ids": 2,
+  "stale_rows": 1,
+  "checks": [
+    {
+      "name": "minimum_row_count",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 23,
+      "expectation": ">= 4 rows"
+    },
+    {
+      "name": "paper_id_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty IDs"
+    },
+    {
+      "name": "paper_id_unique",
+      "dimension": "uniqueness",
+      "passed": false,
+      "observed": 2,
+      "expectation": "0 duplicated ID rows"
+    },
+    {
+      "name": "title_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty titles"
+    },
+    {
+      "name": "summary_not_null",
+      "dimension": "completeness",
+      "passed": false,
+      "observed": 3,
+      "expectation": "0 empty summaries"
+    },
+    {
+      "name": "summary_length",
+      "dimension": "completeness",
+      "passed": false,
+      "observed": 0.8696,
+      "expectation": ">= 90% summaries have >= 40 characters"
+    },
+    {
+      "name": "embedding_text_not_null",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty embedding texts"
+    },
+    {
+      "name": "published_date_valid",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 invalid publication dates"
+    },
+    {
+      "name": "age_days_valid",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 invalid age_days values"
+    },
+    {
+      "name": "freshness_age_days",
+      "dimension": "timeliness",
+      "passed": false,
+      "observed": 1,
+      "expectation": "0 rows older than 180 days"
+    }
+  ],
+  "passed": false,
+  "passed_checks": 6,
+  "failed_checks": 4,
   "pass_paper_id_unique": false,
   "pass_no_null_paper_id": true,
   "pass_no_null_title": true,
-  "empty_summaries": 3,
-  "min_summary_chars": 0,
-  "max_summary_chars": 2610,
-  "stale_rows": 1,
-  "pass_stale_check": false,
-  "duplicate_paper_ids": 1,
   "pass_no_duplicates": false
 }

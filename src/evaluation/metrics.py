@@ -46,6 +46,14 @@ def _token_f1(reference: str, prediction: str) -> float:
 
 
 def _judge_answer(settings: Settings, question: str, reference: str, prediction: str) -> JudgeVerdict:
+    use_llm_judge = os.getenv("USE_LLM_JUDGE", "true").lower() in {"1", "true", "yes"}
+    if not use_llm_judge:
+        score = 5 if _token_f1(reference, prediction) >= 0.95 else 3 if _token_f1(reference, prediction) >= 0.5 else 1
+        return JudgeVerdict(
+            score=score,
+            correct=score >= 3,
+            reasoning="Deterministic token-F1 judge used because USE_LLM_JUDGE is disabled.",
+        )
     prompt = f"""
 Evaluate the model answer against the reference answer.
 

@@ -24,17 +24,22 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
     log: list[dict] = []
     total = len(df)
 
-    # 1. Drop latest records (top 2 by age_days if age_days >=0)
-    if "age_days" in df.columns and len(df) >= 3:
-        sorted_idx = df[df["age_days"] >= 0]["age_days"].nsmallest(2).index.tolist()
-        if sorted_idx:
-            dropped_ids = df.loc[sorted_idx, "paper_id"].tolist()
-            df = df.drop(sorted_idx)
-            log.append({
-                "type": "drop_latest",
-                "removed_count": len(dropped_ids),
-                "removed_paper_ids": dropped_ids,
-            })
+    # 1. Drop the latest records.  Use the source publication timestamp rather
+    # than age_days because Crossref may provide year/month precision, for
+    # which cleaning deliberately uses age_days=-1.
+    if "published" in df.columns and len(df) >= 3:
+        published = pd.to_datetime(df["published"], errors="coerce", utc=True)
+        latest_indices = published.sort_values(ascending=False, na_position="last").head(2).index.tolist()
+        if not latest_indices and "age_days" in df.columns:
+            latest_indices = df["age_days"].sort_values().head(2).index.tolist()
+        dropped_ids = df.loc[latest_indices, "paper_id"].tolist()
+        df = df.drop(index=latest_indices).reset_index(drop=True)
+        log.append({
+            "type": "drop_latest",
+            "removed_count": len(dropped_ids),
+            "removed_paper_ids": dropped_ids,
+            "selection_field": "published",
+        })
 
     # 2. Blank summary on a few rows
     available = df.index.tolist()

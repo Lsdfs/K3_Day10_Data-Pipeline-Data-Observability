@@ -1,31 +1,52 @@
-# Phase 1 — Baseline Pipeline Report
+# Baseline Pipeline Report
 
-## Source Summary
-- API: Crossref REST API
-- Query: agentic retrieval augmented generation large language model
-- Records fetched: 24
-- Records after cleaning: 24
+## Source lineage
 
-## Evaluation Metrics
-- Samples: 24
-- Retrieval Hit Rate: 1.000
-- Mean Token F1: 0.963
-- Judge Accuracy: 1.000
-- Mean Judge Score: 4.4
+| Field | Value |
+| --- | --- |
+| API | Crossref REST API |
+| Query | agentic retrieval augmented generation large language model |
+| Raw records | 24 |
+| Clean records | 24 |
 
-## Data Quality
-- Total rows: 24
-- Unique paper_ids: 24
-- Paper ID unique: PASS
-- No null title: PASS
-- Duplicates: 0
+## Evaluation metrics
+
+| Metric | Value |
+| --- | ---: |
+| `samples` | 24 |
+| `retrieval_hit_rate` | 1.0000 |
+| `mean_token_f1` | 1.0000 |
+| `judge_accuracy` | 1.0000 |
+| `mean_judge_score` | 5 |
+
+## Data quality
+
+Overall: **PASS** — 10 passed, 0 failed.
+
+| Check | Dimension | Status | Observed |
+| --- | --- | --- | ---: |
+| minimum_row_count | completeness | PASS | 24 |
+| paper_id_not_null | completeness | PASS | 0 |
+| paper_id_unique | uniqueness | PASS | 0 |
+| title_not_null | completeness | PASS | 0 |
+| summary_not_null | completeness | PASS | 0 |
+| summary_length | completeness | PASS | 1.0000 |
+| embedding_text_not_null | validity | PASS | 0 |
+| published_date_valid | validity | PASS | 0 |
+| age_days_valid | validity | PASS | 0 |
+| freshness_age_days | timeliness | PASS | 0 |
 
 ## Freshness
-- Latest published: 2026-08-01
-- Oldest published: 2026-02-12
-- Stale rows: 0
-- Is fresh: YES
 
-## Summary
-Baseline pipeline completed successfully. The agent is evaluated on a curated test set.
-All quality checks and freshness reports are generated.
+| Field | Value |
+| --- | --- |
+| Latest published | 2026-08-01 |
+| Oldest published | 2026-02-12 |
+| Latest source update | N/A |
+| Stale rows | 0 / 24 |
+| Threshold | 180 days |
+| Status | **fresh** |
+
+## Evidence
+
+The metrics above are calculated from the persisted test set, answer artifact, and baseline index. Quality and freshness values are calculated from the clean-data artifact of the same run.
