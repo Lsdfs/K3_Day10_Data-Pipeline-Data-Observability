@@ -1,0 +1,14 @@
+{
+  "total_rows": 24,
+  "unique_paper_ids": 24,
+  "pass_paper_id_unique": true,
+  "pass_no_null_paper_id": true,
+  "pass_no_null_title": true,
+  "empty_summaries": 0,
+  "min_summary_chars": 834,
+  "max_summary_chars": 2610,
+  "stale_rows": 0,
+  "pass_stale_check": true,
+  "duplicate_paper_ids": 0,
+  "pass_no_duplicates": true
+}
