@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 import os
@@ -14,6 +14,7 @@ class Paths:
     workspace_dir: Path
     raw_api_response: Path
     raw_records_json: Path
+    ingestion_summary: Path
     clean_csv: Path
     clean_json: Path
     chroma_dir: Path
@@ -31,6 +32,8 @@ class Paths:
     quality_dir: Path
     gx_dir: Path
     freshness_report: Path
+    corrupted_freshness_report: Path
+    repaired_freshness_report: Path
     baseline_report: Path
     corruption_log: Path
     corrupted_metrics: Path
@@ -38,30 +41,42 @@ class Paths:
     repaired_metrics: Path
     repaired_answers: Path
     comparison_report: Path
+    comparison_metrics: Path
+    comparison_csv: Path
+    comparison_chart: Path
+    audit_report: Path
 
 
 @dataclass(frozen=True)
 class Settings:
     llm_provider: str
     model_name: str
-    google_api_key: str | None
-    openai_api_key: str | None
-    anthropic_api_key: str | None
-    openrouter_api_key: str | None
+    google_api_key: str | None = field(repr=False)
+    openai_api_key: str | None = field(repr=False)
+    anthropic_api_key: str | None = field(repr=False)
+    openrouter_api_key: str | None = field(repr=False)
     openrouter_base_url: str
     ollama_base_url: str
-    custom_llm_api_key: str | None
+    custom_llm_api_key: str | None = field(repr=False)
     custom_llm_base_url: str | None
     embedding_model: str
     baseline_collection_name: str
     corrupted_collection_name: str
     repaired_collection_name: str
     source_api: str
+    source_url: str
     source_query: str
     source_filter: str
     max_results: int
+    request_timeout_seconds: float
+    request_max_attempts: int
+    request_backoff_seconds: float
     top_k: int
     freshness_threshold_days: int
+    allow_embedding_fallback: bool
+    embedding_backend_preference: str
+    fallback_embedding_dimension: int
+    corruption_seed: int
     refresh_source: bool
     refresh_test_set: bool
     paths: Paths
@@ -70,11 +85,11 @@ class Settings:
 def load_settings(project_dir: Path | None = None) -> Settings:
     root = (project_dir or Path(__file__).resolve().parents[2]).resolve()
     workspace = root.parent
-    freshness_threshold_days = 180
-    source_from_date = (datetime.now(UTC).date() - timedelta(days=freshness_threshold_days)).isoformat()
-
-    load_dotenv(workspace / ".env")
     load_dotenv(root / ".env", override=False)
+
+    freshness_threshold_days = int(os.getenv("FRESHNESS_THRESHOLD_DAYS", "180"))
+    source_from_date = (datetime.now(UTC).date() - timedelta(days=freshness_threshold_days)).isoformat()
+    source_until_date = datetime.now(UTC).date().isoformat()
 
     data_dir = root / "data"
     paths = Paths(
@@ -82,6 +97,7 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         workspace_dir=workspace,
         raw_api_response=data_dir / "raw" / "crossref_response.json",
         raw_records_json=data_dir / "raw" / "crossref_records.json",
+        ingestion_summary=data_dir / "raw" / "ingestion_summary.json",
         clean_csv=data_dir / "clean" / "papers_clean.csv",
         clean_json=data_dir / "clean" / "papers_clean.json",
         chroma_dir=data_dir / "chroma",
@@ -99,6 +115,8 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         quality_dir=data_dir / "quality",
         gx_dir=data_dir / "quality" / "gx",
         freshness_report=data_dir / "quality" / "freshness_report.json",
+        corrupted_freshness_report=data_dir / "quality" / "corrupted_freshness.json",
+        repaired_freshness_report=data_dir / "quality" / "repaired_freshness.json",
         baseline_report=data_dir / "reports" / "phase1_report.md",
         corruption_log=data_dir / "results" / "corruption_log.json",
         corrupted_metrics=data_dir / "results" / "corrupted_metrics.json",
@@ -106,6 +124,10 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         repaired_metrics=data_dir / "results" / "repaired_metrics.json",
         repaired_answers=data_dir / "results" / "repaired_answers.json",
         comparison_report=data_dir / "reports" / "corruption_report.md",
+        comparison_metrics=data_dir / "results" / "comparison_metrics.json",
+        comparison_csv=data_dir / "reports" / "metrics_comparison.csv",
+        comparison_chart=data_dir / "reports" / "metrics_comparison.svg",
+        audit_report=data_dir / "reports" / "audit_report.json",
     )
 
     return Settings(
@@ -124,11 +146,22 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         corrupted_collection_name="papers-corrupted",
         repaired_collection_name="papers-repaired",
         source_api="Crossref REST API",
-        source_query="agentic retrieval augmented generation large language model",
-        source_filter=f"from-pub-date:{source_from_date},has-abstract:true",
-        max_results=24,
-        top_k=4,
+        source_url=os.getenv("CROSSREF_API_URL", "https://api.crossref.org/works"),
+        source_query=os.getenv("SOURCE_QUERY", "agentic retrieval augmented generation large language model"),
+        source_filter=os.getenv(
+            "SOURCE_FILTER",
+            f"from-pub-date:{source_from_date},until-pub-date:{source_until_date},has-abstract:true",
+        ),
+        max_results=int(os.getenv("MAX_RESULTS", "24")),
+        request_timeout_seconds=float(os.getenv("REQUEST_TIMEOUT_SECONDS", "20")),
+        request_max_attempts=int(os.getenv("REQUEST_MAX_ATTEMPTS", "4")),
+        request_backoff_seconds=float(os.getenv("REQUEST_BACKOFF_SECONDS", "1")),
+        top_k=int(os.getenv("TOP_K", "4")),
         freshness_threshold_days=freshness_threshold_days,
+        allow_embedding_fallback=os.getenv("ALLOW_EMBEDDING_FALLBACK", "").lower() in {"1", "true", "yes"},
+        embedding_backend_preference=os.getenv("EMBEDDING_BACKEND", "minilm").strip().lower(),
+        fallback_embedding_dimension=int(os.getenv("FALLBACK_EMBEDDING_DIMENSION", "384")),
+        corruption_seed=int(os.getenv("CORRUPTION_SEED", "2026")),
         refresh_source=os.getenv("REFRESH_SOURCE", "").lower() in {"1", "true", "yes"},
         refresh_test_set=os.getenv("REFRESH_TEST_SET", "").lower() in {"1", "true", "yes"},
         paths=paths,

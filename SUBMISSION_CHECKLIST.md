@@ -1,0 +1,21 @@
+# SUBMISSION CHECKLIST — ROLE 1
+
+- [x] Repository đúng: `Lsdfs/K3_Day10_Data-Pipeline-Data-Observability`.
+- [x] Nhánh làm việc đúng: `NGUYENQUANGHUY`.
+- [x] `.env`, pytest temp/cache, virtualenv, pycache và model cache được ignore.
+- [x] Không phát hiện secret trong tracked/submission files.
+- [x] Không còn implementation marker trong flow bắt buộc.
+- [x] Architecture Mermaid khớp orchestration thực tế.
+- [x] Test suite PASS: 15 tests.
+- [x] Compile/import PASS trong `.venv`.
+- [x] Baseline pipeline PASS.
+- [x] Corruption và repair pipeline PASS.
+- [x] Ba trạng thái dùng cùng test-set hash.
+- [x] Artifact raw/clean/embedding/eval/results/quality/reports đầy đủ.
+- [x] Metrics/report/visualization lấy từ artifact thật.
+- [x] README, group report, phân công và Rubric audit đã hoàn thiện.
+- [x] Báo cáo cá nhân ROLE 1 của Nguyễn Quang Huy tồn tại.
+- [x] CLI `all` và `audit` đã chạy vòng cuối sau cập nhật tài liệu.
+- [ ] Git working tree sạch trước commit (chỉ đạt sau khi review/commit được phép).
+- [ ] Báo cáo/chữ ký/commit của các thành viên khác do đúng người tự hoàn thiện.
+- [x] Không push thẳng `main`; không reset/force-push/sửa lịch sử.

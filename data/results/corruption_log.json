@@ -1,0 +1,55 @@
+{
+  "seed": 2026,
+  "deterministic": true,
+  "input_rows": 24,
+  "output_rows": 21,
+  "scenarios": [
+    {
+      "type": "drop_latest_records",
+      "count": 4,
+      "paper_ids": [
+        "10.1111/exsy.70341",
+        "10.2118/234689-pa",
+        "10.1007/s10278-026-02086-9",
+        "10.21203/rs.3.rs-10178277/v1"
+      ]
+    },
+    {
+      "type": "blank_summary",
+      "count": 1,
+      "paper_ids": [
+        "10.63646/kpqm1958"
+      ]
+    },
+    {
+      "type": "inject_noise",
+      "count": 1,
+      "paper_ids": [
+        "10.21203/rs.3.rs-9770645/v1"
+      ],
+      "noise_repetitions": 12
+    },
+    {
+      "type": "truncate_title",
+      "count": 1,
+      "paper_ids": [
+        "10.36227/techrxiv.177272838.89432844/v1"
+      ]
+    },
+    {
+      "type": "stale_publication_date",
+      "count": 1,
+      "paper_ids": [
+        "10.3390/app16052244"
+      ],
+      "days_shifted": 3650
+    },
+    {
+      "type": "duplicate_row",
+      "count": 1,
+      "paper_ids": [
+        "10.63646/kpqm1958"
+      ]
+    }
+  ]
+}

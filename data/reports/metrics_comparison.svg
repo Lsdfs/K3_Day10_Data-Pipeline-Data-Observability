@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="40" y="36" font-family="Arial" font-size="24" font-weight="700">Baseline → Corrupted → Repaired</text>
+<line x1="190.0" y1="70" x2="190.0" y2="430" stroke="#e5e7eb"/>
+<text x="190.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">0.0</text>
+<line x1="338.0" y1="70" x2="338.0" y2="430" stroke="#e5e7eb"/>
+<text x="338.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">0.2</text>
+<line x1="486.0" y1="70" x2="486.0" y2="430" stroke="#e5e7eb"/>
+<text x="486.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">0.4</text>
+<line x1="634.0" y1="70" x2="634.0" y2="430" stroke="#e5e7eb"/>
+<text x="634.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">0.6</text>
+<line x1="782.0" y1="70" x2="782.0" y2="430" stroke="#e5e7eb"/>
+<text x="782.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">0.8</text>
+<line x1="930.0" y1="70" x2="930.0" y2="430" stroke="#e5e7eb"/>
+<text x="930.0" y="454" text-anchor="middle" font-family="Arial" font-size="12">1.0</text>
+<text x="20" y="108.0" font-family="Arial" font-size="13">retrieval_hit_rate</text>
+<rect x="190" y="78.0" width="740.0" height="18" rx="3" fill="#2563eb"/>
+<text x="936.0" y="92.0" font-family="Arial" font-size="12">1.000</text>
+<rect x="190" y="101.0" width="370.0" height="18" rx="3" fill="#dc2626"/>
+<text x="566.0" y="115.0" font-family="Arial" font-size="12">0.500</text>
+<rect x="190" y="124.0" width="740.0" height="18" rx="3" fill="#16a34a"/>
+<text x="936.0" y="138.0" font-family="Arial" font-size="12">1.000</text>
+<text x="20" y="198.0" font-family="Arial" font-size="13">mean_token_f1</text>
+<rect x="190" y="168.0" width="740.0" height="18" rx="3" fill="#2563eb"/>
+<text x="936.0" y="182.0" font-family="Arial" font-size="12">1.000</text>
+<rect x="190" y="191.0" width="481.63793103448273" height="18" rx="3" fill="#dc2626"/>
+<text x="677.6379310344828" y="205.0" font-family="Arial" font-size="12">0.651</text>
+<rect x="190" y="214.0" width="740.0" height="18" rx="3" fill="#16a34a"/>
+<text x="936.0" y="228.0" font-family="Arial" font-size="12">1.000</text>
+<text x="20" y="288.0" font-family="Arial" font-size="13">judge_accuracy</text>
+<rect x="190" y="258.0" width="740.0" height="18" rx="3" fill="#2563eb"/>
+<text x="936.0" y="272.0" font-family="Arial" font-size="12">1.000</text>
+<rect x="190" y="281.0" width="462.5" height="18" rx="3" fill="#dc2626"/>
+<text x="658.5" y="295.0" font-family="Arial" font-size="12">0.625</text>
+<rect x="190" y="304.0" width="740.0" height="18" rx="3" fill="#16a34a"/>
+<text x="936.0" y="318.0" font-family="Arial" font-size="12">1.000</text>
+<text x="20" y="378.0" font-family="Arial" font-size="13">mean_judge_score</text>
+<rect x="190" y="348.0" width="740.0" height="18" rx="3" fill="#2563eb"/>
+<text x="936.0" y="362.0" font-family="Arial" font-size="12">5.000</text>
+<rect x="190" y="371.0" width="518.0" height="18" rx="3" fill="#dc2626"/>
+<text x="714.0" y="385.0" font-family="Arial" font-size="12">3.500</text>
+<rect x="190" y="394.0" width="740.0" height="18" rx="3" fill="#16a34a"/>
+<text x="936.0" y="408.0" font-family="Arial" font-size="12">5.000</text>
+<rect x="300" y="478" width="14" height="14" fill="#2563eb"/>
+<text x="322" y="490" font-family="Arial" font-size="13">Baseline</text>
+<rect x="480" y="478" width="14" height="14" fill="#dc2626"/>
+<text x="502" y="490" font-family="Arial" font-size="13">Corrupted</text>
+<rect x="660" y="478" width="14" height="14" fill="#16a34a"/>
+<text x="682" y="490" font-family="Arial" font-size="13">Repaired</text>
+</svg>

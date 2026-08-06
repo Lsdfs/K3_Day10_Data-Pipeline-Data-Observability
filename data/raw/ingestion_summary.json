@@ -1,0 +1,14 @@
+{
+  "source": "Crossref REST API",
+  "endpoint": "https://api.crossref.org/works",
+  "query": "agentic retrieval augmented generation large language model",
+  "filter": "from-pub-date:2026-02-07,until-pub-date:2026-08-06,has-abstract:true",
+  "requested_records": 24,
+  "attempts": 1,
+  "fetched_at": "2026-08-06T04:04:55.940154+00:00",
+  "received_records": 24,
+  "valid_records": 24,
+  "invalid_records": 0,
+  "duplicate_records": 0,
+  "fallback_ids": 0
+}

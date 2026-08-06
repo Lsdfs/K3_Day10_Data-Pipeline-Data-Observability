@@ -8,7 +8,11 @@ lab/
 
 # Local test artifacts
 .pytest_tmp/
+.pytest_tmp_runtime/
 .pytest_cache/
 .vscode/
 __pycache__/
 *.pyc
+.cache/
+models/
+model_cache/

@@ -1,249 +1,190 @@
-# Day 10 - Data Pipeline & Data Observability
+# Day 10 — Data Pipeline & Data Observability
 
-## Mục tiêu bài lab
+Pipeline RAG học thuật dùng Crossref, ChromaDB, retrieval/evaluation và data observability để chứng minh tác động của chất lượng dữ liệu qua ba trạng thái baseline, corrupted và repaired.
 
-Bài lab mô phỏng quy trình xây dựng và vận hành data pipeline cho một hệ thống RAG sử dụng dữ liệu bài báo học thuật từ Crossref.
+Repository: <https://github.com/Lsdfs/K3_Day10_Data-Pipeline-Data-Observability>
 
-Học viên sẽ thực hiện toàn bộ vòng đời dữ liệu:
+## Kiến trúc
 
-- Lấy dữ liệu từ nguồn bên ngoài và lưu lại raw artifacts để có thể truy vết.
-- Làm sạch, chuẩn hóa và chuyển dữ liệu sang schema phù hợp cho embedding.
-- Tạo embedding, nạp dữ liệu vào ChromaDB và dùng corpus này để trả lời câu hỏi.
-- Xây evaluation set và đo chất lượng retrieval/câu trả lời trên dữ liệu sạch.
-- Chủ động tạo các lỗi dữ liệu như thiếu bản ghi, summary rỗng, text nhiễu, ngày cũ và duplicate.
-- Đo ảnh hưởng của dữ liệu lỗi lên chất lượng agent bằng cùng một evaluation set.
-- Repair dữ liệu từ nguồn raw, chạy đánh giá lại và so sánh ba trạng thái: baseline, corrupted và repaired.
-- Tạo data quality report, freshness report và báo cáo so sánh để phát hiện vấn đề trước khi người dùng nhận câu trả lời sai.
+```mermaid
+flowchart TD
+    A[Crossref API hoặc raw snapshot] --> B[data/raw: response + PaperRecord]
+    B --> C[Cleaning và data contract]
+    C --> D[data/clean: CSV + JSON]
+    D --> E[MiniLM hoặc hashing fallback được phép]
+    E --> F[ChromaDB collection baseline]
+    F --> G[Retrieval + exact lookup + QA/Agent]
+    G --> H[Evaluation set cố định]
+    H --> I[Baseline metrics + answers]
+    D --> J[Quality checks + freshness]
+    D --> K[Deterministic corruption]
+    K --> L[Corrupted CSV/JSON + log]
+    L --> M[Chroma collection corrupted]
+    M --> N[Corrupted evaluation + observability]
+    B --> O[Repair bằng cleaning chuẩn từ raw]
+    O --> P[Repaired CSV/JSON]
+    P --> Q[Chroma collection repaired]
+    Q --> R[Repaired evaluation + observability]
+    I --> S[Comparison JSON/CSV/Markdown/SVG]
+    N --> S
+    R --> S
+```
 
-Trọng tâm của bài không chỉ là làm cho ETL chạy được. Học viên phải **chứng minh bằng artifact và metrics rằng chất lượng dữ liệu ảnh hưởng trực tiếp đến chất lượng của RAG/agent**, đồng thời cho thấy pipeline có thể phát hiện và phục hồi sau lỗi dữ liệu.
+| Stage | Input | Output/artifact | Dependency |
+| --- | --- | --- | --- |
+| Ingestion | Crossref query/filter | `data/raw/` | `requests`, Settings |
+| Cleaning | `PaperRecord` | clean CSV/JSON | pandas |
+| Embedding/index | clean dataframe | manifest + Chroma collection | MiniLM hoặc explicit fallback |
+| Retrieval/QA | query + collection | contexts, IDs, extractive answer | Chroma |
+| Evaluation | cùng `test_set.json` | metrics + answers | retrieval/QA |
+| Observability | dataframe | quality/freshness JSON | data contract |
+| Corruption | baseline clean | corrupted data + log | seed cấu hình |
+| Repair | raw snapshot | repaired data/index/metrics | standard cleaning |
+| Reporting | JSON metrics/quality | Markdown, CSV, SVG | generated artifacts |
 
-## Luồng thực hiện và đầu ra
-
-Pipeline hoàn chỉnh đi theo luồng:
+## Cấu trúc
 
 ```text
-Crossref API
-    -> raw data
-    -> cleaned data
-    -> embedding + ChromaDB
-    -> RAG evaluation
-    -> quality/freshness reports
-    -> corrupt data
-    -> evaluate impact
-    -> repair from raw data
-    -> compare baseline/corrupted/repaired
+src/core/             Settings, paths, utilities
+src/ingestion/        Crossref, cleaning, corruption
+src/retrieval/        embeddings, Chroma, QA, agent, LLM providers
+src/evaluation/       deterministic test set và metrics
+src/observability/    quality, freshness, reports, visualization
+src/pipelines/        orchestration, CLI và audit
+script/               Python entrypoints tương thích
+tests/                unit, integration và offline smoke tests
+data/                 artifacts của lần chạy thực tế
+report/               group report và role reports
 ```
 
-Kết thúc bài lab, học viên cần có:
+## Môi trường và cài đặt
 
-- Baseline pipeline chạy end-to-end trên dữ liệu sạch.
-- Corruption flow tạo được dữ liệu lỗi có chủ đích.
-- Repaired pipeline phục hồi dữ liệu và chạy đánh giá lại.
-- Metrics và câu trả lời của agent ở cả ba trạng thái để đối chiếu.
-- Data quality, freshness và comparison reports trong `data/`.
+- Python `>=3.11,<3.14`
+- Internet cho live Crossref và tải MiniLM lần đầu
+- API key chỉ cần khi bật LLM judge/agent provider thật
 
-Xem yêu cầu chi tiết tại:
+Với `uv`:
 
-- [Hướng dẫn từng bước](Guide.md)
-- [Rubric chấm điểm](Rubric.md)
-
-## 1. Yêu cầu trước khi bắt đầu
-
-- **Python 3.11, 3.12 hoặc 3.13** (theo `pyproject.toml` và `uv.lock`)
-- Khuyến nghị dùng [uv](https://docs.astral.sh/uv/getting-started/installation/) để cài đúng dependency từ lockfile
-- Internet để lấy dữ liệu từ Crossref và tải embedding model lần đầu
-- API key của ít nhất một LLM provider nếu chạy các bước có gọi LLM
-
-Nếu máy có nhiều phiên bản Python, hãy chọn Python trong khoảng 3.11-3.13 trước khi cài dependency.
-
-## 2. Cài môi trường
-
-### Cách A - Dùng uv (khuyến nghị)
-
-Tại thư mục gốc của project:
-
-```bash
-uv sync
+```powershell
+uv sync --extra dev
 ```
 
-`uv sync` tạo môi trường `.venv`, cài project và dependency theo `uv.lock`.
-
-### Cách B - Dùng pip
-
-Tạo và kích hoạt virtual environment.
-
-Windows PowerShell:
+Với `pip`:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -e .
+python -m pip install -e ".[dev]"
 ```
 
-macOS/Linux:
+Tạo `.env` từ `.env.example`; không commit file này.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e .
-```
+## Embedding backend và offline fallback
 
-> Không chỉ chạy `pip install -r requirements.txt`: lệnh đó cài các thư viện nhưng không cài package nằm trong `src/`.  ` cài cả project và dependency cần thiết.
-
-## 3. Cấu hình `.env`
-
-Tạo `.env` từ file mẫu.
-
-Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-macOS/Linux:
-
-```bash
-cp .env.example .env
-```
-
-Mặc định project dùng Gemini:
+Mặc định:
 
 ```dotenv
-LLM_PROVIDER=gemini
-LLM_MODEL=gemini-2.5-flash
-GOOGLE_API_KEY=your_key_here
+EMBEDDING_BACKEND=minilm
+ALLOW_EMBEDDING_FALLBACK=false
 ```
 
-Project cũng hỗ trợ `openai`, `anthropic`, `openrouter`, `ollama` và OpenAI-compatible custom endpoint. Chỉ điền credential của provider bạn sử dụng.
-
-Không commit `.env`, API key hoặc secret lên GitHub.
-
-## 4. Hiểu starter trước khi code
-
-Các thư mục chính:
-
-| Thư mục              | Chức năng                                       |
-| ---------------------- | ------------------------------------------------- |
-| `src/core/`          | Cấu hình, đường dẫn và utility dùng chung |
-| `src/ingestion/`     | Lấy dữ liệu Crossref, cleaning và corruption  |
-| `src/retrieval/`     | Embedding, ChromaDB, LLM providers và agent      |
-| `src/evaluation/`    | Tạo test set và tính metrics                   |
-| `src/observability/` | Data quality, freshness và báo cáo             |
-| `src/pipelines/`     | Điều phối baseline flow và corruption flow    |
-| `script/`            | Hai entrypoint để chạy pipeline                |
-| `data/`              | Artifact sinh ra khi chạy lab                    |
-
-Starter cố ý chứa `TODO(student)` và `NotImplementedError`. Đây là trạng thái mong đợi, không phải lỗi setup.
-
-Tìm tất cả phần cần hoàn thành:
-
-```bash
-rg -n "TODO\(student\)|NotImplementedError" src
-```
-
-Nếu chưa cài `rg`, dùng một trong các lệnh sau.
-
-Windows PowerShell:
+MiniLM `sentence-transformers/all-MiniLM-L6-v2` được dùng khi model tải/cache được. Chạy offline có chủ đích:
 
 ```powershell
-Get-ChildItem src -Recurse -Filter *.py | Select-String -Pattern 'TODO\(student\)|NotImplementedError'
+$env:ALLOW_EMBEDDING_FALLBACK='true'
+$env:EMBEDDING_BACKEND='hashing'
 ```
 
-macOS/Linux:
+Fallback không tự bật. Manifest ghi `embedding_backend`, dimension và lý do; artifact hiện tại dùng `local_hashing_fallback`, dimension 384. Không tuyên bố đó là MiniLM.
 
-```bash
-grep -RInE 'TODO\(student\)|NotImplementedError' src
+## CLI
+
+```powershell
+day10-pipeline --help
+day10-pipeline baseline
+day10-pipeline corruption
+day10-pipeline all
+day10-pipeline audit
 ```
 
-Hoặc dùng chức năng Search của VS Code với từ khóa `TODO(student)`.
+Hoặc dùng entrypoint cũ:
 
-## 5. Thứ tự thực hiện
-
-### Pha 1 - Baseline với dữ liệu sạch
-
-1. Implement Crossref ingestion trong `src/ingestion/crossref.py`.
-2. Implement cleaning trong `src/ingestion/cleaning.py`.
-3. Tạo evaluation set trong `src/evaluation/testset.py`.
-4. Implement quality/freshness checks và report trong `src/observability/`.
-5. Ghép các bước trong `src/pipelines/phase1.py`.
-6. Chạy baseline:
-
-```bash
-uv run python script/run_phase1.py
-```
-
-Nếu dùng pip và đã kích hoạt `.venv`:
-
-```bash
+```powershell
 python script/run_phase1.py
-```
-
-### Pha 2 - Corruption, repair và comparison
-
-Chỉ bắt đầu pha này sau khi baseline chạy thành công.
-
-1. Implement corruption trong `src/ingestion/corruption.py`.
-2. Ghép corruption, evaluation, repair và comparison trong `src/pipelines/corruption_flow.py`.
-3. Chạy flow:
-
-```bash
-uv run python script/run_corruption_flow.py
-```
-
-Nếu dùng pip:
-
-```bash
 python script/run_corruption_flow.py
 ```
 
-## 6. Kiểm tra kết quả
+`baseline` fetch khi chưa có snapshot hoặc `REFRESH_SOURCE=true`; `corruption` yêu cầu baseline artifacts; `all` chạy hai flow; `audit` parse/validate artifacts, docs, metrics, test-set hash và file Git tracked.
 
-Sau baseline, tối thiểu cần kiểm tra:
+## Tests và static checks
 
-- `data/raw/`: raw response và records từ Crossref
-- `data/clean/`: cleaned CSV/JSON
-- `data/embeddings/`: embedding manifest
-- `data/eval/`: evaluation test set
-- `data/results/baseline_metrics.json`: metrics của baseline
-- `data/quality/`: data quality và freshness report
-- `data/reports/phase1_report.md`: báo cáo baseline
+```powershell
+python -m pytest -q -p no:cacheprovider --basetemp .pytest_tmp_runtime
+python -m compileall src script
+git diff --check
+```
 
-Sau corruption flow, kiểm tra thêm:
+Unit tests không gọi Crossref/LLM thật. Offline smoke test chạy cả baseline và corruption/repair trên fixture với Chroma tạm.
 
-- corrupted/repaired dataset và metrics trong `data/`
-- `data/results/corruption_log.json`
-- `data/reports/corruption_report.md`
+## Artifact matrix
 
-Các chỉ số trọng tâm:
+| Nhóm | Artifact chính |
+| --- | --- |
+| Raw | `crossref_response.json`, `crossref_records.json`, `ingestion_summary.json` |
+| Clean | baseline/corrupted/repaired CSV + JSON |
+| Embedding | ba manifest trong `data/embeddings/`; collections trong `data/chroma/` |
+| Evaluation | `data/eval/test_set.json` |
+| Results | metrics, answers, corruption log, comparison JSON |
+| Quality | baseline/corrupted/repaired quality và freshness |
+| Reports | phase 1, corruption, comparison CSV và SVG, audit JSON |
 
-- `retrieval_hit_rate`
-- `mean_token_f1`
-- `judge_accuracy`
-- `mean_judge_score`
-- trạng thái data quality và freshness
+## Metrics
 
-Mục tiêu không chỉ là pipeline chạy xong, mà phải có bằng chứng cho thấy data corruption làm thay đổi chất lượng agent và repair giúp khôi phục chất lượng.
+- `retrieval_hit_rate`: tỷ lệ câu có ground-truth DOI trong top-k.
+- `mean_token_f1`: overlap token có xét số lần xuất hiện giữa reference và answer.
+- `judge_accuracy`: tỷ lệ verdict correct.
+- `mean_judge_score`: điểm judge trung bình 1–5.
+- `judge_mode`: `heuristic`, `llm` hoặc `heuristic_fallback`.
 
-## 7. Lỗi setup thường gặp
+Lần chạy hiện tại dùng heuristic judge vì `ENABLE_LLM_JUDGE=false`; Ragas được skip khi `RUN_RAGAS=false`. Không có kết quả LLM giả.
 
-| Triệu chứng                                         | Nguyên nhân thường gặp                          | Cách kiểm tra/xử lý                                                             |
-| ----------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `requires a different Python`                       | Python nằm ngoài khoảng 3.11-3.13                 | Chạy`python --version`, chọn Python phù hợp rồi tạo lại `.venv`          |
-| `No module named 'pipelines'`                       | Mới cài`requirements.txt`, chưa cài project    | Trong`.venv`, chạy `python -m pip install -e .`                                |
-| `GOOGLE_API_KEY is required`                        | Provider mặc định là Gemini nhưng chưa có key | Điền`GOOGLE_API_KEY` hoặc đổi `LLM_PROVIDER` sang provider đã cấu hình |
-| `NotImplementedError: Student task...`              | Chạm tới phần starter chưa implement             | Mở đúng file được ghi trong traceback và hoàn thành`TODO(student)`       |
-| Crossref trả`429`/`503`                          | Rate limit hoặc lỗi tạm thời                     | Implement retry/backoff theo yêu cầu trong`src/ingestion/crossref.py`           |
-| Chạy corruption flow nhưng thiếu baseline artifact | Chưa chạy xong Pha 1                               | Chạy baseline và kiểm tra`data/results/baseline_metrics.json` trước          |
+## Provider support
 
-## 8. Checklist trước khi nộp
+`gemini`, `openai`, `anthropic`, `openrouter`, `ollama` và OpenAI-compatible `custom`. Credential được validate theo provider và ẩn khỏi dataclass repr. `.env` chỉ được đọc từ project root.
 
-- [ ] Cài đặt được trên môi trường sạch bằng một trong hai cách ở trên
-- [ ] Baseline pipeline chạy end-to-end
-- [ ] Corruption flow chạy sau baseline
-- [ ] Có đầy đủ raw, clean, embedding, evaluation, quality và report artifacts
-- [ ] Metrics/report khớp với artifact thực tế
-- [ ] Chứng minh được before/corrupted/repaired bằng số liệu
-- [ ] Không có API key hoặc `.env` trong Git
-- [ ] Đã đối chiếu [Rubric.md](Rubric.md)
+## Kết quả hiện tại
+
+| Signal | Baseline | Corrupted | Repaired |
+| --- | ---: | ---: | ---: |
+| Retrieval hit rate | 1.0000 | 0.5000 | 1.0000 |
+| Mean token F1 | 1.0000 | 0.6509 | 1.0000 |
+| Judge accuracy | 1.0000 | 0.6250 | 1.0000 |
+| Mean judge score | 5.0000 | 3.5000 | 5.0000 |
+| Quality | PASS | FAIL | PASS |
+| Freshness | fresh | stale_or_invalid | fresh |
+
+Nguồn: `data/results/*.json` và `data/quality/*.json`. Report sinh tự động từ cùng payload.
+
+## Troubleshooting
+
+| Lỗi | Cách xử lý |
+| --- | --- |
+| MiniLM không tải được | Cấp Internet/model cache; hoặc bật explicit hashing fallback như trên |
+| Thiếu API key | Giữ `ENABLE_LLM_JUDGE=false` hoặc cấu hình đúng provider |
+| Crossref 429/5xx | Pipeline retry hữu hạn với exponential backoff và `Retry-After` |
+| Corruption báo thiếu baseline | Chạy `day10-pipeline baseline` trước |
+| Windows pytest Temp permission | Dùng `--basetemp .pytest_tmp_runtime -p no:cacheprovider` |
+| Audit FAIL | Đọc `data/reports/audit_report.json` và sửa từng error code |
+
+## Git và secret
+
+Không track `.env`, `.venv`, cache model, pytest temp/cache, `__pycache__`, `*.pyc`, token hoặc API key. Không force-push/reset lịch sử. Chroma test database chỉ nằm trong ignored pytest temp; `data/chroma/` là artifact pipeline thực tế.
+
+## Giới hạn
+
+- Artifact hiện tại chứng minh hashing fallback, chưa phải bằng chứng runtime MiniLM.
+- LLM judge và Ragas chưa chạy vì được tắt; metrics chính vẫn là offline deterministic.
+- Evaluation set gồm 8 câu trên corpus 24 records, phù hợp lab nhưng chưa đại diện production.
+
+Xem thêm: [Guide](Guide.md), [Rubric](Rubric.md), [Rubric audit](RUBRIC_AUDIT.md), [group report](report/group_report.md), [submission checklist](SUBMISSION_CHECKLIST.md).

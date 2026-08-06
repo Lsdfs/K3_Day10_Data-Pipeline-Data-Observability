@@ -1,0 +1,180 @@
+{
+  "report_name": "corrupted_quality",
+  "generated_at": "2026-08-06T04:10:10.453947+00:00",
+  "total_rows": 21,
+  "status": "FAIL",
+  "passed": false,
+  "passed_checks": 10,
+  "failed_checks": 5,
+  "checks": [
+    {
+      "name": "dataset_not_empty",
+      "dimension": "completeness",
+      "status": "PASS",
+      "passed": true,
+      "observed": 21,
+      "threshold": "> 0 rows",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Dataset must contain at least one row."
+    },
+    {
+      "name": "required_columns",
+      "dimension": "validity",
+      "status": "PASS",
+      "passed": true,
+      "observed": [],
+      "threshold": "no missing required columns",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "All pipeline contract columns must exist."
+    },
+    {
+      "name": "paper_id_completeness",
+      "dimension": "completeness",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 empty",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Every row needs a stable document ID."
+    },
+    {
+      "name": "paper_id_uniqueness",
+      "dimension": "uniqueness",
+      "status": "FAIL",
+      "passed": false,
+      "observed": 2,
+      "threshold": "0 duplicate rows",
+      "failed_count": 2,
+      "failed_rate": 0.095238,
+      "message": "Document IDs must be unique."
+    },
+    {
+      "name": "duplicate_rate",
+      "dimension": "uniqueness",
+      "status": "FAIL",
+      "passed": false,
+      "observed": 0.095238,
+      "threshold": "0.0",
+      "failed_count": 2,
+      "failed_rate": 0.095238,
+      "message": "Duplicate rate is measured across paper_id."
+    },
+    {
+      "name": "title_completeness",
+      "dimension": "completeness",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 empty",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Titles are required for retrieval and lookup."
+    },
+    {
+      "name": "summary_completeness",
+      "dimension": "completeness",
+      "status": "FAIL",
+      "passed": false,
+      "observed": 2,
+      "threshold": "0 empty",
+      "failed_count": 2,
+      "failed_rate": 0.095238,
+      "message": "Summaries are required for answer extraction."
+    },
+    {
+      "name": "summary_length",
+      "dimension": "completeness",
+      "status": "FAIL",
+      "passed": false,
+      "observed": 0.904762,
+      "threshold": "100% >= 40 chars",
+      "failed_count": 2,
+      "failed_rate": 0.095238,
+      "message": "Summaries should contain meaningful text."
+    },
+    {
+      "name": "embedding_text_completeness",
+      "dimension": "validity",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 empty",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Embedding text must be present."
+    },
+    {
+      "name": "published_parseability",
+      "dimension": "validity",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 invalid",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Publication dates must parse as ISO dates."
+    },
+    {
+      "name": "age_days_validity",
+      "dimension": "validity",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 null/negative",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "age_days must be numeric and non-negative."
+    },
+    {
+      "name": "stale_rate",
+      "dimension": "timeliness",
+      "status": "FAIL",
+      "passed": false,
+      "observed": 0.047619,
+      "threshold": "0 rows > 180 days",
+      "failed_count": 1,
+      "failed_rate": 0.047619,
+      "message": "No row should exceed the freshness threshold."
+    },
+    {
+      "name": "authors_completeness",
+      "dimension": "completeness",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 unknown/empty",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Authors should be available from source metadata."
+    },
+    {
+      "name": "categories_completeness",
+      "dimension": "completeness",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 empty",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "Categories must have a normalized value."
+    },
+    {
+      "name": "abstract_url_validity",
+      "dimension": "validity",
+      "status": "PASS",
+      "passed": true,
+      "observed": 0,
+      "threshold": "0 invalid URL",
+      "failed_count": 0,
+      "failed_rate": 0.0,
+      "message": "abs_url must be an HTTP(S) URL."
+    }
+  ],
+  "great_expectations": {
+    "status": "NOT_APPLICABLE",
+    "message": "Core checks run without a GX checkpoint."
+  }
+}

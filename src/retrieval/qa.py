@@ -21,17 +21,20 @@ def _extract_answer(question: str, top_result: SearchResult) -> str:
     lowered = question.lower()
     metadata = top_result.metadata
     if "who authored" in lowered or "list the authors" in lowered:
-        return metadata["authors_joined"]
+        return str(metadata.get("authors_joined") or "Unknown")
     if "when was" in lowered or "publication date" in lowered or "published on" in lowered:
-        return metadata["published"]
+        return str(metadata.get("published") or "Unknown")
     if "what categories" in lowered:
-        return metadata["categories_joined"]
-    return first_sentence(metadata["summary"])
+        return str(metadata.get("categories_joined") or "Unknown")
+    summary = str(metadata.get("summary") or "")
+    return first_sentence(summary) if summary.strip() else "I don't know from the indexed corpus."
 
 
 def answer_question(question: str, settings: Settings, index: LocalEmbeddingIndex, top_k: int | None = None) -> AnswerResult:
     title_match = re.search(r"'([^']+)'", question)
-    exact = index.lookup(title_match.group(1)) if title_match else None
+    doi_match = re.search(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", question, flags=re.IGNORECASE)
+    lookup_value = title_match.group(1) if title_match else doi_match.group(0) if doi_match else None
+    exact = index.lookup(lookup_value) if lookup_value else None
     retrieved = index.search(question, top_k=top_k)
     if exact:
         exact_result = SearchResult(
