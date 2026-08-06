@@ -5,3 +5,10 @@ lab.txt
 src/*.egg-info/
 lab/
 **/__pycache__/
+
+# Local test artifacts
+.pytest_tmp/
+.pytest_cache/
+.vscode/
+__pycache__/
+*.pyc
