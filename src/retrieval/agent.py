@@ -10,7 +10,7 @@ from retrieval.index import LocalEmbeddingIndex
 from retrieval.llm import build_llm
 
 
-def build_agent(settings: Settings, index: LocalEmbeddingIndex):
+def build_agent_tools(index: LocalEmbeddingIndex):
     @tool
     def semantic_search_papers(query: str, top_k: int = 4) -> str:
         """Search the local paper corpus with embeddings and return the most relevant papers."""
@@ -37,10 +37,15 @@ def build_agent(settings: Settings, index: LocalEmbeddingIndex):
             f"{record['content']}"
         )
 
+    return [semantic_search_papers, lookup_paper]
+
+
+def build_agent(settings: Settings, index: LocalEmbeddingIndex):
+    tools = build_agent_tools(index)
     llm = build_llm(settings=settings, temperature=0.0)
     return create_agent(
         model=llm,
-        tools=[semantic_search_papers, lookup_paper],
+        tools=tools,
         system_prompt=(
             "You answer questions about the indexed scholarly paper corpus sourced from Crossref. "
             "Use tools before answering factual questions. "
