@@ -135,12 +135,12 @@ Các thư mục chính:
 | `script/`            | Hai entrypoint để chạy pipeline                |
 | `data/`              | Artifact sinh ra khi chạy lab                    |
 
-Phiên bản hiện tại đã triển khai đầy đủ các điểm khuyết của starter.
+Starter cố ý chứa `TODO(student)` và `NotImplementedError`. Đây là trạng thái mong đợi, không phải lỗi setup.
 
 Tìm tất cả phần cần hoàn thành:
 
 ```bash
-rg -n "TODO" src
+rg -n "TODO\(student\)|NotImplementedError" src
 ```
 
 Nếu chưa cài `rg`, dùng một trong các lệnh sau.
@@ -148,16 +148,16 @@ Nếu chưa cài `rg`, dùng một trong các lệnh sau.
 Windows PowerShell:
 
 ```powershell
-Get-ChildItem src -Recurse -Filter *.py | Select-String -Pattern 'TODO'
+Get-ChildItem src -Recurse -Filter *.py | Select-String -Pattern 'TODO\(student\)|NotImplementedError'
 ```
 
 macOS/Linux:
 
 ```bash
-grep -RIn 'TODO' src
+grep -RInE 'TODO\(student\)|NotImplementedError' src
 ```
 
-Hoặc dùng chức năng Search của VS Code với từ khóa `TODO`.
+Hoặc dùng chức năng Search của VS Code với từ khóa `TODO(student)`.
 
 ## 5. Thứ tự thực hiện
 
@@ -233,30 +233,17 @@ Mục tiêu không chỉ là pipeline chạy xong, mà phải có bằng chứng
 | `requires a different Python`                       | Python nằm ngoài khoảng 3.11-3.13                 | Chạy`python --version`, chọn Python phù hợp rồi tạo lại `.venv`          |
 | `No module named 'pipelines'`                       | Mới cài`requirements.txt`, chưa cài project    | Trong`.venv`, chạy `python -m pip install -e .`                                |
 | `GOOGLE_API_KEY is required`                        | Provider mặc định là Gemini nhưng chưa có key | Điền`GOOGLE_API_KEY` hoặc đổi `LLM_PROVIDER` sang provider đã cấu hình |
-| Audit báo source chưa hoàn thiện                    | Còn marker hoặc artifact thiếu                   | Chạy `uv run day10-pipeline audit` và xử lý file được báo                 |
+| `NotImplementedError: Student task...`              | Chạm tới phần starter chưa implement             | Mở đúng file được ghi trong traceback và hoàn thành`TODO(student)`       |
 | Crossref trả`429`/`503`                          | Rate limit hoặc lỗi tạm thời                     | Implement retry/backoff theo yêu cầu trong`src/ingestion/crossref.py`           |
 | Chạy corruption flow nhưng thiếu baseline artifact | Chưa chạy xong Pha 1                               | Chạy baseline và kiểm tra`data/results/baseline_metrics.json` trước          |
 
-## 8. CLI, kiểm thử và trạng thái đã xác minh
+## 8. Checklist trước khi nộp
 
-```powershell
-uv sync --extra dev
-uv run pytest -q --basetemp .pytest_tmp
-uv run day10-pipeline baseline
-uv run day10-pipeline corruption
-uv run day10-pipeline audit
-```
-
-Lệnh `day10-pipeline all` chạy baseline rồi corruption/repair. Khi không tải được model, có thể đặt `EMBEDDING_OFFLINE_FALLBACK=true`; manifest luôn ghi backend thực tế. Đặt `REQUIRE_MINILM=true` nếu muốn dừng thay vì fallback.
-
-- [x] Cài đặt bằng lockfile và chạy 9 unit/integration tests
-- [x] Baseline pipeline chạy end-to-end
-- [x] Corruption/repair flow chạy sau baseline
-- [x] Có đủ raw, clean, Chroma/embedding, evaluation, quality và report artifacts
-- [x] Metrics/report khớp artifact: hit rate `1.0000 → 0.3333 → 1.0000`
-- [x] Audit artifact và source PASS
-- [x] Không track `.env` hoặc model cache
-- [x] Có phân công, báo cáo nhóm và bốn báo cáo cá nhân
-- [ ] Mỗi thành viên tự review/ký báo cáo và tạo commit/PR đúng danh tính
-
-Xem [báo cáo nhóm](report/group_report.md), [phân công](PHAN_CONG_CONG_VIEC.md) và [biểu đồ so sánh](data/reports/metrics_comparison.svg).
+- [ ] Cài đặt được trên môi trường sạch bằng một trong hai cách ở trên
+- [ ] Baseline pipeline chạy end-to-end
+- [ ] Corruption flow chạy sau baseline
+- [ ] Có đầy đủ raw, clean, embedding, evaluation, quality và report artifacts
+- [ ] Metrics/report khớp với artifact thực tế
+- [ ] Chứng minh được before/corrupted/repaired bằng số liệu
+- [ ] Không có API key hoặc `.env` trong Git
+- [ ] Đã đối chiếu [Rubric.md](Rubric.md)

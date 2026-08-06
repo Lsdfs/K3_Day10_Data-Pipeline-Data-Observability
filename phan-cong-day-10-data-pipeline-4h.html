@@ -43,7 +43,7 @@
       <div class="clock-box"><div class="clock-display" id="clock" aria-live="polite">30:00</div><div class="edit-time-box"><span>Thời lượng mốc:</span><input type="number" id="time-input" value="30" min="1" max="180" onchange="updateCustomTime()"><span>phút</span></div></div>
       <div class="time-note" id="time-note">00:00–00:30 · timeline gốc vẫn tổng cộng 04:00.</div>
       <div style="display:flex;flex-direction:column;gap:8px"><div class="timer-controls"><button class="btn btn-primary" id="btn-toggle" onclick="toggleTimer()"><span>▶</span><span id="btn-toggle-text">BẮT ĐẦU</span></button><button class="btn btn-secondary" onclick="resetTimer()">↺ Reset</button></div><div class="nav-controls"><button class="btn-nav" onclick="prevCP()">← Checkpoint trước</button><button class="btn-nav" onclick="nextCP()">Checkpoint tiếp →</button></div></div>
-      <div class="cmd-card"><div class="cmd-title">Lệnh / kiểm tra nhanh</div><div class="cmd-box" id="cp-cmd">uv run day10-pipeline audit</div></div>
+      <div class="cmd-card"><div class="cmd-title">Lệnh / kiểm tra nhanh</div><div class="cmd-box" id="cp-cmd">rg -n "TODO\(student\)|NotImplementedError" src</div></div>
       <div class="pass-card"><div class="pass-title">✓ Tiêu chí hoàn thành mốc</div><div id="cp-pass">Cả nhóm thống nhất contract và phân công.</div></div>
       <div class="session-bar">Tổng phiên: <b>04:00</b> · Nghỉ: <b>02:00–02:15</b></div>
     </aside>

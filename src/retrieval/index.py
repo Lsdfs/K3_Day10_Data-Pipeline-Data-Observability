@@ -33,8 +33,8 @@ class LocalEmbeddingIndex:
         self.collection_name = collection_name
         self.documents = documents
         self.persist_path = persist_path
+        self.embedding_backend = "chroma"
         self.embedding_model = MiniLMEmbeddings(settings.embedding_model)
-        self.embedding_backend = getattr(self.embedding_model, "backend", type(self.embedding_model).__name__)
         self.client = chromadb.PersistentClient(path=str(persist_path))
         self.collection = self.client.get_collection(name=collection_name)
         self.documents_by_paper_id = {document["paper_id"].lower(): document for document in documents}
@@ -116,9 +116,7 @@ class LocalEmbeddingIndex:
             {
                 "backend": "chroma",
                 "embedding_model": settings.embedding_model,
-                "embedding_backend": getattr(embedding_model, "backend", type(embedding_model).__name__),
-                "embedding_fallback_reason": getattr(embedding_model, "fallback_reason", None),
-                "persist_path": str(persist_path.relative_to(settings.paths.project_dir)),
+                "persist_path": str(persist_path),
                 "collection_name": collection_name,
                 "documents": documents,
             },
@@ -133,14 +131,11 @@ class LocalEmbeddingIndex:
     @classmethod
     def load(cls, settings: Settings, embeddings_path: Path | None = None) -> "LocalEmbeddingIndex":
         payload = read_json(embeddings_path or settings.paths.embeddings_json)
-        persist_path = Path(payload["persist_path"])
-        if not persist_path.is_absolute():
-            persist_path = settings.paths.project_dir / persist_path
         return cls(
             settings=settings,
             collection_name=payload["collection_name"],
             documents=payload["documents"],
-            persist_path=persist_path,
+            persist_path=Path(payload["persist_path"]),
         )
 
     def search(self, query: str, top_k: int | None = None) -> list[SearchResult]:
