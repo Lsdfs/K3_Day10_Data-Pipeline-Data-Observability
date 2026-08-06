@@ -5,9 +5,9 @@
 | Field | Value |
 | --- | --- |
 | Name | Yen Khanh |
-| MSSV | **[Fill in MSSV]** |
+| MSSV | 2A202601739 |
 | Class | K3 |
-| Group | **[Fill in group name]** |
+| Group | ViatminB4 |
 | Role | Evaluation & Observability |
 
 ## 2. Owned work
@@ -58,4 +58,3 @@ Crossref records are saved raw, cleaned into a DOI-keyed dataframe, embedded wit
 
 - [x] Claims in this report are supported by artifacts.
 - [x] No secret is included.
-- [ ] Fill MSSV and group name before submission.

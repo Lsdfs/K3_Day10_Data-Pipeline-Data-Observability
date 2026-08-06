@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Class | K3 |
-| Group | **[Fill in group name]** |
+| Group | ViatminB4 |
 | Repository | `K3_Day10_Data-Pipeline-Data-Observability` |
 | Completion date | 2026-08-06 |
 
@@ -98,5 +98,5 @@ The initial full flow called Gemini once per evaluation sample, causing 48 seque
 - [x] Baseline/corrupted/repaired use the same fixed test set.
 - [x] Corruption log records affected DOI IDs and counts.
 - [x] Repair rebuilds from raw snapshot rather than modifying corrupted data.
-- [ ] Fill group name, member names, and MSSV before submission.
+- [ ] Fill remaining member names and MSSV before submission, if applicable.
 - [ ] Commit the final code and regenerated artifacts before submission.
