@@ -1,0 +1,37 @@
+[
+  {
+    "type": "blank_summary",
+    "affected_count": 2,
+    "affected_paper_ids": [
+      "10.1007/s10278-026-02086-9",
+      "10.1093/sleep/zsag091.0346"
+    ]
+  },
+  {
+    "type": "inject_noise",
+    "affected_paper_ids": [
+      "10.20944/preprints202602.0996.v1"
+    ]
+  },
+  {
+    "type": "truncate_title",
+    "affected_paper_ids": [
+      "10.1111/exsy.70341"
+    ]
+  },
+  {
+    "type": "stale_date",
+    "affected_paper_ids": [
+      "10.1093/sleep/zsag091.0346"
+    ]
+  },
+  {
+    "type": "add_duplicate",
+    "duplicate_count": 1,
+    "duplicate_paper_id": "10.1007/s10278-026-02086-9"
+  },
+  {
+    "total_before_corruption": 24,
+    "total_after_corruption": 25
+  }
+]
