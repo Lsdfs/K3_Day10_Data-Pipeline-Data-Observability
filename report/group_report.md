@@ -12,12 +12,14 @@
 | Member | MSSV | Primary role | Individual report |
 | --- | --- | --- | --- |
 | Nguyễn Quang Huy | 2A202601873 | Role 1 — configuration and orchestration | `report/individual_nguyen_quang_huy.md` |
+| Nguyễn Quốc Việt | 2A202601737 | Role 2 — data platform and recovery | `report/individual_nguyen_quoc_viet.md` |
 | Diêm Công Thành | 2A202601689 | Role 3 — RAG and agent | `report/2A202601689_DIEMCONGTHANH.md` |
 | Yen Khanh | 2A202601739 | Role 4 — evaluation and observability | `report/individual_report_ChuThiYenKhanh.md` |
 
 | Role | Ownership | Main deliverables |
 | --- | --- | --- |
 | 1 | Configuration and orchestration | `src/core/`, `src/pipelines/` |
+| 2 | Data platform and recovery | `src/ingestion/`, raw/clean artifacts |
 | 3 | RAG and agent | `src/retrieval/`, Chroma collections |
 | 4 | Evaluation and observability | `src/evaluation/`, `src/observability/` |
 
