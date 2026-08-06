@@ -20,6 +20,9 @@ dependencies = [
   "sentence-transformers>=5.0.0",
 ]
 
+[project.scripts]
+day10-pipeline = "pipelines.cli:main"
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8.3.2",

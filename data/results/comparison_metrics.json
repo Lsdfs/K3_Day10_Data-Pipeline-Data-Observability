@@ -1,0 +1,172 @@
+{
+  "baseline": {
+    "samples": 6,
+    "retrieval_hit_rate": 1.0,
+    "mean_token_f1": 1.0,
+    "judge_accuracy": 1.0,
+    "mean_judge_score": 5,
+    "ragas": {
+      "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
+    }
+  },
+  "corrupted": {
+    "samples": 6,
+    "retrieval_hit_rate": 0.3333333333333333,
+    "mean_token_f1": 0.36904761904761907,
+    "judge_accuracy": 0.3333333333333333,
+    "mean_judge_score": 2.3333333333333335,
+    "ragas": {
+      "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
+    }
+  },
+  "repaired": {
+    "samples": 6,
+    "retrieval_hit_rate": 1.0,
+    "mean_token_f1": 1.0,
+    "judge_accuracy": 1.0,
+    "mean_judge_score": 5,
+    "ragas": {
+      "skipped": "Set RUN_RAGAS=1 to enable the slower Ragas pass."
+    }
+  },
+  "quality": {
+    "corrupted": {
+      "report_name": "corrupted_quality",
+      "total_rows": 21,
+      "passed": false,
+      "passed_checks": 5,
+      "failed_checks": 2,
+      "checks": [
+        {
+          "name": "minimum_row_count",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 21,
+          "expectation": ">= 8 rows"
+        },
+        {
+          "name": "paper_id_not_null",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty IDs"
+        },
+        {
+          "name": "paper_id_unique",
+          "dimension": "uniqueness",
+          "passed": false,
+          "observed": 2,
+          "expectation": "0 rows with duplicate IDs"
+        },
+        {
+          "name": "title_not_null",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty titles"
+        },
+        {
+          "name": "summary_length",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 0.9524,
+          "expectation": ">= 90% summaries have at least 40 characters"
+        },
+        {
+          "name": "embedding_text_not_null",
+          "dimension": "validity",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty embedding texts"
+        },
+        {
+          "name": "freshness_age_days",
+          "dimension": "timeliness",
+          "passed": false,
+          "observed": 1,
+          "expectation": "0 rows older than 180 days"
+        }
+      ]
+    },
+    "repaired": {
+      "report_name": "repaired_quality",
+      "total_rows": 24,
+      "passed": true,
+      "passed_checks": 7,
+      "failed_checks": 0,
+      "checks": [
+        {
+          "name": "minimum_row_count",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 24,
+          "expectation": ">= 8 rows"
+        },
+        {
+          "name": "paper_id_not_null",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty IDs"
+        },
+        {
+          "name": "paper_id_unique",
+          "dimension": "uniqueness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 rows with duplicate IDs"
+        },
+        {
+          "name": "title_not_null",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty titles"
+        },
+        {
+          "name": "summary_length",
+          "dimension": "completeness",
+          "passed": true,
+          "observed": 1.0,
+          "expectation": ">= 90% summaries have at least 40 characters"
+        },
+        {
+          "name": "embedding_text_not_null",
+          "dimension": "validity",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 empty embedding texts"
+        },
+        {
+          "name": "freshness_age_days",
+          "dimension": "timeliness",
+          "passed": true,
+          "observed": 0,
+          "expectation": "0 rows older than 180 days"
+        }
+      ]
+    }
+  },
+  "freshness": {
+    "corrupted": {
+      "latest_published": "2026-07-03",
+      "oldest_published": "2016-07-02",
+      "stale_rows": 1,
+      "invalid_date_rows": 0,
+      "total_rows": 21,
+      "freshness_threshold_days": 180,
+      "is_fresh": false,
+      "status": "stale_or_invalid"
+    },
+    "repaired": {
+      "latest_published": "2026-08-01",
+      "oldest_published": "2026-02-12",
+      "stale_rows": 0,
+      "invalid_date_rows": 0,
+      "total_rows": 24,
+      "freshness_threshold_days": 180,
+      "is_fresh": true,
+      "status": "fresh"
+    }
+  }
+}

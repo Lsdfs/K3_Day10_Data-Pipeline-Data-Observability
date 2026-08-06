@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 import os
@@ -44,22 +44,26 @@ class Paths:
 class Settings:
     llm_provider: str
     model_name: str
-    google_api_key: str | None
-    openai_api_key: str | None
-    anthropic_api_key: str | None
-    openrouter_api_key: str | None
+    google_api_key: str | None = field(repr=False)
+    openai_api_key: str | None = field(repr=False)
+    anthropic_api_key: str | None = field(repr=False)
+    openrouter_api_key: str | None = field(repr=False)
     openrouter_base_url: str
     ollama_base_url: str
-    custom_llm_api_key: str | None
+    custom_llm_api_key: str | None = field(repr=False)
     custom_llm_base_url: str | None
     embedding_model: str
     baseline_collection_name: str
     corrupted_collection_name: str
     repaired_collection_name: str
     source_api: str
+    source_url: str
     source_query: str
     source_filter: str
     max_results: int
+    request_timeout_seconds: float
+    request_max_attempts: int
+    request_backoff_seconds: float
     top_k: int
     freshness_threshold_days: int
     refresh_source: bool
@@ -70,11 +74,11 @@ class Settings:
 def load_settings(project_dir: Path | None = None) -> Settings:
     root = (project_dir or Path(__file__).resolve().parents[2]).resolve()
     workspace = root.parent
-    freshness_threshold_days = 180
-    source_from_date = (datetime.now(UTC).date() - timedelta(days=freshness_threshold_days)).isoformat()
 
-    load_dotenv(workspace / ".env")
     load_dotenv(root / ".env", override=False)
+
+    freshness_threshold_days = int(os.getenv("FRESHNESS_THRESHOLD_DAYS", "180"))
+    source_from_date = (datetime.now(UTC).date() - timedelta(days=freshness_threshold_days)).isoformat()
 
     data_dir = root / "data"
     paths = Paths(
@@ -124,10 +128,14 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         corrupted_collection_name="papers-corrupted",
         repaired_collection_name="papers-repaired",
         source_api="Crossref REST API",
+        source_url=os.getenv("CROSSREF_API_URL", "https://api.crossref.org/works"),
         source_query="agentic retrieval augmented generation large language model",
         source_filter=f"from-pub-date:{source_from_date},has-abstract:true",
-        max_results=24,
-        top_k=4,
+        max_results=int(os.getenv("MAX_RESULTS", "24")),
+        request_timeout_seconds=float(os.getenv("REQUEST_TIMEOUT_SECONDS", "20")),
+        request_max_attempts=int(os.getenv("REQUEST_MAX_ATTEMPTS", "4")),
+        request_backoff_seconds=float(os.getenv("REQUEST_BACKOFF_SECONDS", "1")),
+        top_k=int(os.getenv("TOP_K", "4")),
         freshness_threshold_days=freshness_threshold_days,
         refresh_source=os.getenv("REFRESH_SOURCE", "").lower() in {"1", "true", "yes"},
         refresh_test_set=os.getenv("REFRESH_TEST_SET", "").lower() in {"1", "true", "yes"},

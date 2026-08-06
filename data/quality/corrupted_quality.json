@@ -1,0 +1,58 @@
+{
+  "report_name": "corrupted_quality",
+  "total_rows": 21,
+  "passed": false,
+  "passed_checks": 5,
+  "failed_checks": 2,
+  "checks": [
+    {
+      "name": "minimum_row_count",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 21,
+      "expectation": ">= 8 rows"
+    },
+    {
+      "name": "paper_id_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty IDs"
+    },
+    {
+      "name": "paper_id_unique",
+      "dimension": "uniqueness",
+      "passed": false,
+      "observed": 2,
+      "expectation": "0 rows with duplicate IDs"
+    },
+    {
+      "name": "title_not_null",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty titles"
+    },
+    {
+      "name": "summary_length",
+      "dimension": "completeness",
+      "passed": true,
+      "observed": 0.9524,
+      "expectation": ">= 90% summaries have at least 40 characters"
+    },
+    {
+      "name": "embedding_text_not_null",
+      "dimension": "validity",
+      "passed": true,
+      "observed": 0,
+      "expectation": "0 empty embedding texts"
+    },
+    {
+      "name": "freshness_age_days",
+      "dimension": "timeliness",
+      "passed": false,
+      "observed": 1,
+      "expectation": "0 rows older than 180 days"
+    }
+  ]
+}
