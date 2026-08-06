@@ -7,7 +7,7 @@
 | Name | Nguyễn Quốc Việt |
 | MSSV | 2A202601737 |
 | Class | K3 |
-| Group | ViatminB4 |
+| Group | VitaminB4 |
 | Role | Role 2 — Data Platform & Recovery |
 
 ## 2. Owned work

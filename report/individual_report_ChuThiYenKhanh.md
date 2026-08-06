@@ -7,7 +7,7 @@
 | Name | Yen Khanh |
 | MSSV | 2A202601739 |
 | Class | K3 |
-| Group | ViatminB4 |
+| Group | VitaminB4 |
 | Role | Evaluation & Observability |
 
 ## 2. Owned work

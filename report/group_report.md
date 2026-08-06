@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Class | K3 |
-| Group | ViatminB4 |
+| Group | VitaminB4 |
 | Repository | `K3_Day10_Data-Pipeline-Data-Observability` |
 | Completion date | 2026-08-06 |
 

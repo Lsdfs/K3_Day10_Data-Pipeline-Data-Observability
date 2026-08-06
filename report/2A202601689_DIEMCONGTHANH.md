@@ -6,7 +6,7 @@
 | Họ và tên | Diêm Công Thành |
 | MSSV | 2A202601689 |
 | Khóa/Lớp | Khóa 3 |
-| Tên nhóm | Vitamin B4 |
+| Tên nhóm | VitaminB4 |
 | Vai trò chính | Vai trò 3 - RAG & agent |
 | Phạm vi | MiniLM, Chroma, tìm kiếm ngữ nghĩa, tra cứu chính xác, agent tools |
 | Repository | K3_Day10_Data-Pipeline-Data-Observability |
